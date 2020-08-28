@@ -91,6 +91,15 @@ function render_email_content(email_id) {
   document.querySelector('#email-content-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
 
+  // Mark email as read
+  fetch(`/emails/${email_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+      read: true
+    })
+  })
+
+  // Render email content
   fetch(`/emails/${email_id}`)
     .then(response => response.json())
     .then(email => {
@@ -112,5 +121,7 @@ function render_email_content(email_id) {
         `;
       }
       document.querySelector('#email-content-view').append(div);
+      console.log(email.read)
     });
 }
+
