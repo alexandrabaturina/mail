@@ -13,6 +13,7 @@ function compose_email() {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#email-content-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
@@ -45,6 +46,7 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
+  document.querySelector('#email-content-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
 
   // Show the mailbox name
@@ -55,16 +57,60 @@ function load_mailbox(mailbox) {
     .then(emails => {
       emails.forEach(email => {
         const div = document.createElement('div');
-        div.innerHTML = `
+        if (mailbox === 'inbox' || mailbox === 'archive') {
+          div.innerHTML = `
             <div class='email-block'>${email.sender}</div>
-            <div class='email-block'>${email.subject}</div>
-            <div class='email-block'>${email.timestamp}</div>
           `;
+        } else if (mailbox === 'sent') {
+          div.innerHTML = `
+          <div class='email-block'>${email.recipients}</div>
+          `;
+        }
+        div.innerHTML += `
+          <div class='email-block'>${email.subject}</div>
+          <div class='email-block'>${email.timestamp}</div>
+        `;
         div.classList.add('email-div');
-        document.querySelector('#emails-view').append(div);
+        if (email.read === true) {
+          div.style.backgroundColor = '#E8E8E8';
+        }
 
+        document.querySelector('#emails-view').append(div);
+        div.addEventListener('click', () => render_email_content(`${email.id}`));
       });
     });
+}
 
-  // document.querySelector('#tasks').append(li);
+
+function render_email_content(email_id) {
+
+  document.querySelector('#email-content-view').innerHTML = '';
+
+  // Show email content view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#email-content-view').style.display = 'block';
+  document.querySelector('#compose-view').style.display = 'none';
+
+  fetch(`/emails/${email_id}`)
+    .then(response => response.json())
+    .then(email => {
+      const div = document.createElement('div');
+      div.innerHTML = `
+        <h3>${email.subject}</h3>
+        <p>
+          To: <strong>${email.recipients}</strong><br>
+          From: <strong>${email.sender}</strong><br>
+          ${email.timestamp}
+        </p>
+        <hr/>
+      `;
+      // Render email body line by line if there's more than one line
+      const emailBody = email.body.split("\n");
+      for (var i = 0, len = emailBody.length; i < len; i++) {
+        div.innerHTML += `
+          <p>${emailBody[i]}</p>
+        `;
+      }
+      document.querySelector('#email-content-view').append(div);
+    });
 }
