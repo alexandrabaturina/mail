@@ -76,13 +76,13 @@ function load_mailbox(mailbox) {
         }
 
         document.querySelector('#emails-view').append(div);
-        div.addEventListener('click', () => render_email_content(`${email.id}`));
+        div.addEventListener('click', () => render_email_content(`${email.id}`, mailbox));
       });
     });
 }
 
 
-function render_email_content(email_id) {
+function render_email_content(email_id, mailbox) {
 
   document.querySelector('#email-content-view').innerHTML = '';
 
@@ -113,6 +113,7 @@ function render_email_content(email_id) {
         </p>
         <hr/>
       `;
+
       // Render email body line by line if there's more than one line
       const emailBody = email.body.split("\n");
       for (var i = 0, len = emailBody.length; i < len; i++) {
@@ -121,7 +122,30 @@ function render_email_content(email_id) {
         `;
       }
       document.querySelector('#email-content-view').append(div);
-      console.log(email.read)
+
+      // Do not archive mail in the Sent mailbox
+      if (mailbox === 'sent') {
+        return
+      }
+
+      // Archive/Unarchive email 
+      const btn = document.createElement('button');
+      btn.innerHTML = email.archived ? 'Unarchive' : 'Archive';
+      btn.classList.add('btn-sm');
+      document.querySelector('#email-content-view').append(btn);
+
+      btn.addEventListener('click', () => {
+        console.log(`Status before function invocation: ${email.archived}`);
+        fetch(`/emails/${email.id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            archived: !email.archived
+          })
+        })
+          .then(result => {
+            load_mailbox('inbox');
+          });
+      });
+
     });
 }
-
