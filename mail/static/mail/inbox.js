@@ -44,7 +44,7 @@ function send_email(event) {
         compose_email();
       } else {
         document.querySelector('#emails-view').style.display = 'block';
-        load_mailbox('inbox');
+        load_mailbox('sent');
         render_alert('Email sent successfully.', 'alert-success', '#emails-view');
       }
     });
