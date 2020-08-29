@@ -61,11 +61,11 @@ function reply_to_email(email) {
   document.querySelector('#compose-recipients').value = email.sender;
 
   document.querySelector('#compose-subject').value = email.subject.indexOf('Re:') === 0 ? email.subject : `Re: ${email.subject}`;
-  document.querySelector('#compose-body').innerHTML = `
-  on ${email.timestamp} ${email.sender} wrote:\n
-  ${email.body} \n \n
+  document.querySelector('#compose-body').value = `
+on ${email.timestamp} ${email.sender} wrote:\n
+${email.body} \n
   `;
-  document.querySelector('#compose-form').addEventListener('submit', send_email);;
+  document.querySelector('#compose-form').addEventListener('submit', send_email);
 }
 
 
