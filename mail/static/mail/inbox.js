@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
   load_mailbox('inbox');
 });
 
-function compose_email() {
 
+function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#email-content-view').style.display = 'none';
@@ -24,6 +24,7 @@ function compose_email() {
   // Send email when clicking Submit button
   document.querySelector('#compose-form').addEventListener('submit', send_email);
 }
+
 
 function send_email(event) {
   event.preventDefault();
@@ -41,6 +42,7 @@ function send_email(event) {
       load_mailbox('sent');
     });
 }
+
 
 function reply_to_email(email) {
   // Show compose view and hide other views
@@ -60,9 +62,7 @@ function reply_to_email(email) {
 }
 
 
-
 function load_mailbox(mailbox) {
-
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#email-content-view').style.display = 'none';
@@ -81,6 +81,7 @@ function load_mailbox(mailbox) {
             <div class='email-block'>${email.sender}</div>
           `;
         } else if (mailbox === 'sent') {
+          // When several recipients, show the first one
           div.innerHTML = `
           <div class='email-block'>${email.recipients[0]}</div>
           `;
@@ -102,7 +103,6 @@ function load_mailbox(mailbox) {
 
 
 function render_email_content(email_id, mailbox) {
-
   document.querySelector('#email-content-view').innerHTML = '';
 
   // Show email content view and hide other views
@@ -149,8 +149,10 @@ function render_email_content(email_id, mailbox) {
 
       // Add Archive/Unarchive button 
       const btn = document.createElement('button');
+      btn.setAttribute("id", "archiveButton");
       btn.innerHTML = email.archived ? 'Unarchive' : 'Archive';
-      btn.classList.add('btn-sm');
+      btn.classList.add('btn')
+      btn.classList.add('btn-light');
       document.querySelector('#email-content-view').append(btn);
 
       // Archive/unarchive email
@@ -168,8 +170,10 @@ function render_email_content(email_id, mailbox) {
 
       // Add Reply button
       const reply = document.createElement('button');
+      reply.setAttribute("id", "replyButton");
       reply.innerHTML = 'Reply';
-      reply.classList.add('btn-sm');
+      reply.classList.add('btn');
+      reply.classList.add('btn-light');
       document.querySelector('#email-content-view').append(reply);
 
       // Reply to email
