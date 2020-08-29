@@ -38,8 +38,15 @@ function send_email(event) {
   })
     .then(response => response.json())
     .then(result => {
-      console.log(result);
-      load_mailbox('sent');
+      if (result.error) {
+        console.log(`Error: ${result.error}`);
+        render_alert(`${result.error}`, 'alert-danger', '#compose-view');
+        compose_email();
+      } else {
+        document.querySelector('#emails-view').style.display = 'block';
+        load_mailbox('inbox');
+        render_alert('Email sent successfully.', 'alert-success', '#emails-view');
+      }
     });
 }
 
@@ -56,7 +63,7 @@ function reply_to_email(email) {
   document.querySelector('#compose-subject').value = email.subject.indexOf('Re:') === 0 ? email.subject : `Re: ${email.subject}`;
   document.querySelector('#compose-body').innerHTML = `
   on ${email.timestamp} ${email.sender} wrote:\n
-  ${email.body}
+  ${email.body} \n \n
   `;
   document.querySelector('#compose-form').addEventListener('submit', send_email);;
 }
@@ -165,6 +172,11 @@ function render_email_content(email_id, mailbox) {
         })
           .then(result => {
             load_mailbox('inbox');
+            if (email.archived === true) {
+              render_alert(`Email from ${email.sender} unarchived.`, 'alert-success', '#emails-view');
+            } else {
+              render_alert(`Email from ${email.sender} archived.`, 'alert-success', '#emails-view');
+            }
           });
       });
 
@@ -180,4 +192,18 @@ function render_email_content(email_id, mailbox) {
       reply.addEventListener('click', () => reply_to_email(email));
 
     });
+}
+
+
+function render_alert(alert, alertTheme, view) {
+  if (document.getElementById("alert-div")) {
+    document.getElementById("alert-div").remove();
+  }
+  const div = document.createElement('div');
+  div.innerHTML = alert;
+  div.setAttribute("role", "alert");
+  div.setAttribute("id", "alert-div");
+  div.classList.add('alert');
+  div.classList.add(alertTheme);
+  document.querySelector(view).prepend(div);
 }
