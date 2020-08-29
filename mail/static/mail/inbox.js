@@ -42,6 +42,25 @@ function send_email(event) {
     });
 }
 
+function reply_to_email(email) {
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#email-content-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+
+  // Pre-fill composition fields
+  document.querySelector('#compose-recipients').value = email.sender;
+
+  document.querySelector('#compose-subject').value = email.subject.indexOf('Re:') === 0 ? email.subject : `Re: ${email.subject}`;
+  document.querySelector('#compose-body').innerHTML = `
+  on ${email.timestamp} ${email.sender} wrote:\n
+  ${email.body}
+  `;
+  document.querySelector('#compose-form').addEventListener('submit', send_email);;
+}
+
+
+
 function load_mailbox(mailbox) {
 
   // Show the mailbox and hide other views
@@ -63,7 +82,7 @@ function load_mailbox(mailbox) {
           `;
         } else if (mailbox === 'sent') {
           div.innerHTML = `
-          <div class='email-block'>${email.recipients}</div>
+          <div class='email-block'>${email.recipients[0]}</div>
           `;
         }
         div.innerHTML += `
@@ -128,14 +147,14 @@ function render_email_content(email_id, mailbox) {
         return
       }
 
-      // Archive/Unarchive email 
+      // Add Archive/Unarchive button 
       const btn = document.createElement('button');
       btn.innerHTML = email.archived ? 'Unarchive' : 'Archive';
       btn.classList.add('btn-sm');
       document.querySelector('#email-content-view').append(btn);
 
+      // Archive/unarchive email
       btn.addEventListener('click', () => {
-        console.log(`Status before function invocation: ${email.archived}`);
         fetch(`/emails/${email.id}`, {
           method: 'PUT',
           body: JSON.stringify({
@@ -146,6 +165,15 @@ function render_email_content(email_id, mailbox) {
             load_mailbox('inbox');
           });
       });
+
+      // Add Reply button
+      const reply = document.createElement('button');
+      reply.innerHTML = 'Reply';
+      reply.classList.add('btn-sm');
+      document.querySelector('#email-content-view').append(reply);
+
+      // Reply to email
+      reply.addEventListener('click', () => reply_to_email(email));
 
     });
 }
