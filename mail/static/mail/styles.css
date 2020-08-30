@@ -36,7 +36,7 @@ div.email-block:nth-child(2) {
 
 /* Email timestamp */
 div.email-block:nth-child(3) {
-    width: 300px;
+    width: 320px;
     text-align: right;
     padding-right: 10px;
 }
