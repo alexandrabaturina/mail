@@ -50,3 +50,9 @@ The project meets the following requirements.
   * The ```body``` of the email is pre-filled with a line like ```"On Jan 1 2020, 12:00 AM foo@example.com wrote:"``` followed by the original text of the email.
 
 ![image](https://user-images.githubusercontent.com/53233637/92070253-60820b00-ed60-11ea-9e2a-7764aec78b8d.png)
+## Dependencies
+The app is built using *Django* framework. To install Django via terminal, use the following command.
+```sh
+$ pip3 install Django
+```
+
