@@ -55,4 +55,22 @@ The app is built using *Django* framework. To install Django via terminal, use t
 ```sh
 $ pip3 install Django
 ```
-
+## Getting Started
+### Running Locally
+To run **mail** locally,
+1. Clone this repo.
+2. ```cd``` into project directory.
+3. Start the Django web server.
+```
+$ python manage.py runserver
+```
+4. Access ```127.0.0.1:8000``` in your browser.
+### Resetting a Database
+The repo contains test database. To reset database,
+1. Delete **db.sqlite3** file.
+2. Run the following command.
+```sh
+$ python manage.py flush
+```
+## Authors
+Alexandra Baturina
